@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "45679077994",
+    "project_id": "nbc-app-5b29a",
+    "storage_bucket": "nbc-app-5b29a.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:45679077994:android:70b00201e69ed1bd26b813",
+        "android_client_info": {
+          "package_name": "com.example.nbc_app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB_NsbE-w7ANlRHU_j8Zb6Ml8nt8Kl6jjU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
