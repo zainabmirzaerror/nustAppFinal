@@ -1,5 +1,6 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:nbc_app/screens/post_screen.dart';
 import 'package:nbc_app/screens/welcome_screen.dart';
 import 'firebase_options.dart';
 
@@ -17,7 +18,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return const MaterialApp(
-      home: WelcomeScreen(),
+      home: PostScreenAdmin(),
     );
   }
 }
