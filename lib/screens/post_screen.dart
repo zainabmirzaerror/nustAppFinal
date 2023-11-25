@@ -19,8 +19,11 @@ class _PostScreenAdminState extends State<PostScreenAdmin> {
   final detailController = TextEditingController();
   bool loading = false;
   final databaseRef = FirebaseDatabase.instance.ref('Post');
+  final CollectionReference _notificationCollection =
+      FirebaseFirestore.instance.collection('notificationsData');
   final FirebaseFirestore _firebaseFirestore = FirebaseFirestore.instance;
   PlatformFile? pickedFile;
+  String? downloadUrl;
 
   Future pickFile() async {
     final result = await FilePicker.platform.pickFiles();
@@ -29,6 +32,15 @@ class _PostScreenAdminState extends State<PostScreenAdmin> {
     setState(() {
       pickedFile = result.files.first;
     });
+  }
+
+  Future uplaodFile() async {
+    final path = 'impFiles/${pickedFile!.name}';
+    final file = File(pickedFile!.path!);
+
+    final ref = FirebaseStorage.instance.ref().child(path);
+    downloadUrl = await ref.getDownloadURL();
+    ref.putFile(file);
   }
 
   @override
@@ -49,12 +61,14 @@ class _PostScreenAdminState extends State<PostScreenAdmin> {
             ),
             SizedBox(height: 30),
             ElevatedButton(onPressed: (pickFile), child: Text("SELECT FILE")),
+            ElevatedButton(onPressed: (uplaodFile), child: Text("UPLOAD FILE")),
             ElevatedButton(
-                onPressed: () {
-                  String id = DateTime.now().millisecondsSinceEpoch.toString();
-                  databaseRef.child(id).set({
-                    'title': titleController.text.toString(),
-                    'detail': detailController.text.toString()
+                onPressed: () async {
+                  await _firebaseFirestore.collection('notificationsData').add({
+                    "title": titleController.text.toString(),
+                    "details": detailController.text.toString(),
+                    "downloadLink": downloadUrl,
+                    "timeStamp": DateTime.now().toString()
                   });
                   Navigator.push(
                       context,

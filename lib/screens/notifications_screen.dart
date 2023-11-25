@@ -1,7 +1,6 @@
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_database/ui/firebase_animated_list.dart';
 import 'package:flutter/material.dart';
-import 'package:firebase_database/firebase_database.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:nbc_app/screens/notifications_screen.dart';
 
 class NotifcationsScreen extends StatefulWidget {
   const NotifcationsScreen({super.key});
@@ -11,31 +10,36 @@ class NotifcationsScreen extends StatefulWidget {
 }
 
 class _NotifcationsScreenState extends State<NotifcationsScreen> {
-  final auth = FirebaseAuth.instance;
-  final ref = FirebaseDatabase.instance.ref('Post');
+  final CollectionReference _notificationCollection =
+      FirebaseFirestore.instance.collection('notificationsData');
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Container(
-          width: MediaQuery.of(context).size.width,
-          height: MediaQuery.of(context).size.height,
-          decoration: BoxDecoration(
-            color: Colors.white,
-          ),
-          child: Column(children: <Widget>[
-            Expanded(
-                child: FirebaseAnimatedList(
-                    query: ref,
-                    defaultChild: Text("Loading"),
-                    itemBuilder: (context, snapshot, animation, index) {
-                      return ListTile(
-                        title: Text(snapshot.child('title').value.toString()),
-                        subtitle:
-                            Text(snapshot.child('detail').value.toString()),
-                      );
-                    }))
-          ])),
-    );
+        body: StreamBuilder<QuerySnapshot>(
+      stream: _notificationCollection.snapshots(),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return CircularProgressIndicator();
+        }
+
+        if (snapshot.hasError) {
+          return Text('Error: ${snapshot.error}');
+        }
+
+        // If the connection is active and there is no error, build the list.
+        return ListView.builder(
+          itemCount: snapshot.data!.docs.length,
+          itemBuilder: (context, index) {
+            var user = snapshot.data!.docs[index];
+            return ListTile(
+              leading: Text(user['title']),
+              title: Text(user['details']),
+              subtitle: Text(user['timeStamp']),
+            );
+          },
+        );
+      },
+    ));
   }
 }
